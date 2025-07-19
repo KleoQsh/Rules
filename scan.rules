@@ -1,8 +1,10 @@
-################################################################################
+#######################################################################
+#########
 #  1. Nmap SYN scan (default, multiple ports)
 alert tcp $EXTERNAL_NET any -> $HOME_NET [21,22,23,80,443,3389] (
     msg:"PORTSCAN: Nmap SYN Scan"; flow:stateless; flags:S;
     tcpopts:!mss,!sackOK,!wscale; ip_proto:6; tos:0x00; ttl:<64;
+
     dsize:>0; fragbits:!MFF; detection_filter:track by_src, count 20, seconds 5;
     reference:url,nmap.org; classtype:attempted-recon; priority:2;
     sid:2500001; rev:1;
