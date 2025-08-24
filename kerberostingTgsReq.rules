@@ -1,0 +1,4 @@
+alert tcp 192.168.1.0/24 any -> 192.168.1.1 389 (msg:"Kerberoasting LDAP SPN Enumeration"; content:"servicePrincipalName"; nocase; sid:100001; rev:1;)
+alert tcp 192.168.1.0/24 any -> 192.168.1.1 88 (msg:"Kerberoasting TGS-REQ with RC4 etype"; content:"|a1 03 02 01 17|"; offset:0; depth:0; sid:100002; rev:1;)
+alert tcp 192.168.1.0/24 any -> 192.168.1.1 88 (msg:"Kerberoasting Multiple TGS-REQ Requests"; flow:to_server; threshold:type both, track by_src, count 10, seconds 60; sid:100003; rev:1;)
+alert tcp 192.168.1.1 88 -> 192.168.1.0/24 any (msg:"Kerberoasting Multiple TGS-REP Responses"; flow:to_client; threshold:type both, track by_dst, count 10, seconds 60; sid:100004; rev:1;)
