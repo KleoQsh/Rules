@@ -1,0 +1,1 @@
+alert tcp any any -> <DC_IP> 88 (msg:"Kerberos AS-REP Roasting - Single User"; content:"krb5asrep"; nocase; threshold:type both, track by_src, count 1, seconds 60; sid:800002; rev:1;)
