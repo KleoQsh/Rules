@@ -1,3 +1,8 @@
 alert tcp any any -> any 49152:65535 (msg:"DCSync replication response detected"; flow:established,to_client; content:"|05 00 00 03|"; depth:4; threshold:type both, track by_src, count 5, seconds 60; sid:500001; rev:1;)
 alert tcp any any -> any 49152:65535 (msg:"Possible DCSync from non-DC host"; flow:established,to_client; content:"|05 00 00 03|"; depth:4; reference:url,attack.mitre.org/T1003.006; sid:500002; rev:1;)
 alert tcp any 49152:65535 -> any any (msg:"Possible DCSync / Golden Ticket export"; flow:established,to_server; threshold:type both, track by_src, count 5, seconds 60; sid:500003; rev:1;)
+alert tcp any any -> any 49152:65535 (msg:"DCSync suspicious MS-DRSR requests"; flow:established,to_server; content:"|05 00 00 03|"; depth:4; threshold:type both, track by_src, count 3, seconds 30; sid:500004; rev:1;)
+alert tcp any any -> any 49152:65535 (msg:"High-volume DCSync replication response"; flow:established,to_client; byte_test:4,>,8000,0; content:"|05 00 00 03|"; depth:4; threshold:type both, track by_src, count 2, seconds 60; sid:500005; rev:1;)
+alert tcp any any -> any 49152:65535 (msg:"DCSync RPC traffic from non-privileged account"; flow:established,to_server; content:"|05 00 00 03|"; depth:4; threshold:type both, track by_src, count 3, seconds 30; sid:500006; rev:1;)
+alert tcp any any -> any 49152:65535 (msg:"Possible DCSync attack - multiple ephemeral connections"; flow:established; threshold:type both, track by_src, count 5, seconds 60; sid:500007; rev:1;)
+alert tcp any 49152:65535 -> any any (msg:"Possible DCSync / Golden Ticket outgoing burst"; flow:established; threshold:type both, track by_src, count 4, seconds 30; sid:500008; rev:1;)
