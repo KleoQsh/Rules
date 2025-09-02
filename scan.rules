@@ -5,7 +5,6 @@ alert tcp any any -> $HOME_NET any (flags:F; msg:"Nmap FIN scan"; threshold:type
 alert tcp any any -> $HOME_NET any (flags:0; msg:"Nmap NULL scan"; threshold:type both, track by_src, count 5, seconds 60; sid:600011; rev:2;)
 alert tcp any any -> $HOME_NET any (flags:FPU; msg:"Nmap Xmas scan"; threshold:type both, track by_src, count 5, seconds 60; sid:600012; rev:2;)
 alert tcp any any -> $HOME_NET any (flags:FA; msg:"FIN+ACK probe"; threshold:type both, track by_src, count 5, seconds 60; sid:600013; rev:2;)
-alert tcp any any -> $HOME_NET any (flags:A; msg:"Nmap ACK scan"; detection_filter:track by_src, count 100, seconds 30; sid:600020; rev:2;)
 alert tcp any any -> $HOME_NET any (flags:A; flow:stateless; msg:"Nmap Window scan abnormal win size"; window:1024; threshold:type both, track by_src, count 3, seconds 120; sid:600021; rev:2;)
 alert tcp any any -> $HOME_NET any (flags:F; ack:0; msg:"Nmap Maimon scan"; threshold:type both, track by_src, count 3, seconds 60; sid:600022; rev:2;)
 alert udp any any -> $HOME_NET any (msg:"Nmap UDP scan"; threshold:type both, track by_src, count 30, seconds 15; sid:600030; rev:2;)
