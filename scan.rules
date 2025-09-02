@@ -18,7 +18,6 @@ alert icmp any any -> $HOME_NET any (itype:8; msg:"ICMP ping sweep"; threshold:t
 alert icmp any any -> $HOME_NET any (itype:13; msg:"ICMP timestamp probe (Nmap)"; sid:600051; rev:2;)
 alert icmp any any -> $HOME_NET any (itype:17; msg:"ICMP address mask probe"; sid:600052; rev:2;)
 alert ip any any -> $HOME_NET any (fragbits:M; msg:"Nmap tiny fragment evasion"; threshold:type both, track by_src, count 5, seconds 60; sid:600060; rev:2;)
-alert ip any any -> $HOME_NET any (fragbits:D; msg:"Nmap overlapping fragment evasion"; sid:600061; rev:2;)
 alert tcp any any -> $HOME_NET any (ttl:1; msg:"Suspicious low TTL scan"; threshold:type both, track by_src, count 5, seconds 30; sid:600062; rev:2;)
 alert tcp any any -> $HOME_NET any (flags:S; ttl:0; msg:"Suspicious TTL=0 scan"; sid:600072; rev:2;)
 alert tcp any any -> $HOME_NET any (flags:S; flow:stateless; msg:"Possible decoy scan (multiple sources fast SYN)"; detection_filter:track by_dst, count 40, seconds 5; sid:600070; rev:2;)
