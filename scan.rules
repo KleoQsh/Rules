@@ -41,4 +41,3 @@ alert tcp any any -> $HOME_NET 110 (msg:"Nmap POP3 probe"; content:"+OK"; depth:
 alert tcp any any -> $HOME_NET any (flags:U; msg:"Urgent flag scan"; threshold:type both, track by_src, count 3, seconds 60; sid:600114; rev:3;)
 alert tcp any any -> $HOME_NET any (flags:S; ttl:2; msg:"Low TTL SYN stealth"; threshold:type both, track by_src, count 5, seconds 60; sid:600115; rev:3;)
 alert tcp any any -> $HOME_NET any (flow:stateless; msg:"Bogus TCP option scan"; content:"|01 01 08 0a|"; sid:600116; rev:3;)
-alert tcp any any -> $HOME_NET any (flags:A; msg:"Nmap ACK scan"; detection_filter:track by_src, count 3, seconds 60; sid:600020; rev:3;)
