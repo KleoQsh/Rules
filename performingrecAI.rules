@@ -1,10 +1,74 @@
-alert tcp any any -> $HOME_NET 135 (msg:"RPC ping sweep"; sid:730001; rev:1;)
-alert tcp any any -> $HOME_NET 139 (msg:"NetBIOS session request"; sid:730002; rev:1;)
-alert tcp any any -> $HOME_NET 445 (msg:"SMB enumeration"; sid:730003; rev:1;)
-alert icmp any any -> $HOME_NET any (itype:8; msg:"ICMP ping sweep"; sid:730004; rev:1;)
-alert icmp any any -> $HOME_NET any (itype:13; msg:"ICMP timestamp probe"; sid:730005; rev:1;)
-alert tcp any any -> $HOME_NET any (msg:"TCP SYN scan layer1"; flags:S; sid:730006; rev:1;)
-alert tcp any any -> $HOME_NET any (msg:"TCP FIN scan layer1"; flags:F; sid:730007; rev:1;)
-alert tcp any any -> $HOME_NET any (msg:"TCP NULL scan layer1"; flags:0; sid:730008; rev:1;)
-alert tcp any any -> $HOME_NET any (msg:"TCP Xmas scan layer1"; flags:FPU; sid:730009; rev:1;)
-alert tcp any any -> $HOME_NET any (msg:"High-frequency probe"; threshold:type both, track by_src, count 10, seconds 30; sid:730010; rev:1;)
+# Reconnaissance - Network scanning patterns
+alert tcp any any -> $HOME_NET any (msg:"Reconnaissance - TCP port scanning"; flags:S; threshold:type both, track by_src, count 10, seconds 30; sid:1004001; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - DNS zone transfer attempt
+alert tcp any any -> any 53 (msg:"Reconnaissance - DNS zone transfer attempt"; content:"|00 00 fc 00 01|"; sid:1004002; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - SMB enumeration
+alert tcp any any -> any 445 (msg:"Reconnaissance - SMB share enumeration"; content:"IPC$"; sid:1004003; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - NetBIOS enumeration
+alert udp any any -> any 137 (msg:"Reconnaissance - NetBIOS name enumeration"; content:"|01 10 00 01 00 00 00 00 00 00 20|"; sid:1004004; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - SNMP enumeration
+alert udp any any -> any 161 (msg:"Reconnaissance - SNMP enumeration"; content:"|30 82|"; content:"public"; sid:1004005; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - WMI enumeration attempts
+alert tcp any any -> any 135 (msg:"Reconnaissance - WMI enumeration attempt"; content:"|4d 45 4f 57|"; sid:1004006; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - RPC enumeration
+alert tcp any any -> any 135 (msg:"Reconnaissance - RPC endpoint enumeration"; content:"|05 00 0b 03 10 00 00 00|"; sid:1004007; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - LDAP ping/discovery
+alert udp any any -> any 389 (msg:"Reconnaissance - LDAP discovery"; content:"|30 84 00 00 00 2a 02 01|"; sid:1004008; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Kerberos realm discovery
+alert udp any any -> any 88 (msg:"Reconnaissance - Kerberos realm discovery"; content:"|6a 82|"; content:"|a1 03 02 01|"; sid:1004009; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - DNS TXT record queries
+alert udp any any -> any 53 (msg:"Reconnaissance - DNS TXT record enum"; content:"|00 10 00 01|"; sid:1004010; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Multiple protocol probing
+alert tcp any any -> any any (msg:"Reconnaissance - Multi-protocol probing"; flags:S; threshold:type both, track by_src, count 5, seconds 10; sid:1004011; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Service banner grabbing
+alert tcp any any -> any any (msg:"Reconnaissance - Service banner grab"; content:"220"; content:"HTTP/1."; sid:1004012; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - ICMP host discovery
+alert icmp any any -> $HOME_NET any (msg:"Reconnaissance - ICMP host discovery"; itype:8; threshold:type both, track by_src, count 10, seconds 30; sid:1004013; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - ARP scanning
+alert arp any any -> any any (msg:"Reconnaissance - ARP scanning"; threshold:type both, track by_src, count 20, seconds 60; sid:1004014; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - HTTP OPTIONS enumeration
+alert tcp any any -> any 80 (msg:"Reconnaissance - HTTP OPTIONS enumeration"; content:"OPTIONS"; http_method; sid:1004015; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - SSL/TLS certificate enumeration
+alert tcp any any -> any 443 (msg:"Reconnaissance - SSL certificate enum"; content:"|16 03|"; content:"|01 00|"; sid:1004016; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - FTP enumeration
+alert tcp any any -> any 21 (msg:"Reconnaissance - FTP enumeration"; content:"220"; content:"FTP"; sid:1004017; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Telnet enumeration
+alert tcp any any -> any 23 (msg:"Reconnaissance - Telnet enumeration"; content:"login:"; sid:1004018; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - SSH enumeration
+alert tcp any any -> any 22 (msg:"Reconnaissance - SSH enumeration"; content:"SSH-"; sid:1004019; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Database enumeration
+alert tcp any any -> any 1433 (msg:"Reconnaissance - SQL Server enumeration"; content:"|04 01|"; sid:1004020; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Oracle enumeration
+alert tcp any any -> any 1521 (msg:"Reconnaissance - Oracle enumeration"; content:"CONNECT_DATA"; sid:1004021; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - MySQL enumeration
+alert tcp any any -> any 3306 (msg:"Reconnaissance - MySQL enumeration"; content:"|0a|"; content:"mysql_native_password"; sid:1004022; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Web application discovery
+alert tcp any any -> any 80 (msg:"Reconnaissance - Web app discovery"; content:"GET /admin"; http_method; http_uri; sid:1004023; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - Directory traversal attempts
+alert tcp any any -> any any (msg:"Reconnaissance - Directory traversal"; content:"../"; content:"../../"; sid:1004024; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
+
+# Reconnaissance - User-Agent enumeration
+alert tcp any any -> any 80 (msg:"Reconnaissance - Suspicious User-Agent"; content:"User-Agent: "; content:"sqlmap"; http_header; sid:1004025; rev:1; classtype:attempted-recon; metadata:attack_target Client_Endpoint, created_at 2024_01_01, deployment Perimeter, tag Recon_Phase1;)
